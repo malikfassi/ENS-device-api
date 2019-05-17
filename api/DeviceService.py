@@ -22,10 +22,12 @@ class DeviceService:
         self.public_key = self.private_key.public_key()
 
     def get_pub_key(self):
+        print(Utils.CYAN("GET /PUBLIC_KEY"))
         return {'pub_key': Utils.serialize_key(self.public_key)}
 
     def decrypt(self, json_data):
-        encrypted_message = json_data['message']
+        print(Utils.CYAN("DECRYPTING RESOLVED ADDRESS.... "))
+        encrypted_message = json_data['encrypted_address']
         encrypted_message = base64.b64decode(encrypted_message)
         original_message = self.private_key.decrypt(
             encrypted_message,
@@ -35,6 +37,7 @@ class DeviceService:
                 label=None
             )
         )
+        print(Utils.CYAN(f"RESOLVED ADDRESS : {original_message.decode()}"))
         return original_message
 
     def encrypt(self, json_data):
