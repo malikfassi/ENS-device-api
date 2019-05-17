@@ -33,6 +33,7 @@ class Controller:
     @staticmethod
     @routes.route('/verify', methods=['POST'])
     def verify():
+        print(request.json)
         decrypted = Controller.device_service.verify(request.json['encryptedAddress'], request.json['name'])
         return HttpResource.success(decrypted)
 
