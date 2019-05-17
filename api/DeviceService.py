@@ -25,10 +25,9 @@ class DeviceService:
         print(Utils.CYAN("GET /PUBLIC_KEY"))
         return {'pub_key': Utils.serialize_key(self.public_key)}
 
-    def decrypt(self, json_data):
+    def decrypt(self, encrypted_address):
         print(Utils.CYAN("DECRYPTING RESOLVED ADDRESS.... "))
-        encrypted_message = json_data['encrypted_address']
-        encrypted_message = base64.b64decode(encrypted_message)
+        encrypted_message = base64.b64decode(encrypted_address)
         original_message = self.private_key.decrypt(
             encrypted_message,
             padding.OAEP(
@@ -37,8 +36,15 @@ class DeviceService:
                 label=None
             )
         )
-        print(Utils.CYAN(f"RESOLVED ADDRESS : {original_message.decode()}"))
         return original_message
+
+    def verify(self, encrypted_address, name):
+        decrypted_address = self.decrypt(encrypted_address)
+        print(Utils.CYAN(f"ENS ADDRESS {name} HAS BEEN RESOLVED TO : {decrypted_address}"))
+        verified = None
+        while verified not in ['Y', 'N']:
+            verified = input("Confirm address (Y/N)")
+        return verified == 'Y'
 
     def encrypt(self, json_data):
         message = json_data['message'].encode()
